@@ -170,22 +170,24 @@ function updateRoomLocks() {
                     lockElement.textContent = '🔒';
                 }
             } else {
-                // Комната воспоминаний имеет 6 замков
+                // Комната воспоминаний имеет 7 замков
                 const locksInRoom = gameState.locks[room] ? gameState.locks[room].length : 0;
                 if (locksInRoom === 0) {
-                    lockElement.textContent = '🔒🔒🔒🔒🔒🔒';
+                    lockElement.textContent = '🔒🔒🔒🔒🔒🔒🔒';
                 } else if (locksInRoom === 1) {
-                    lockElement.textContent = '🔓🔒🔒🔒🔒🔒';
+                    lockElement.textContent = '🔓🔒🔒🔒🔒🔒🔒';
                 } else if (locksInRoom === 2) {
-                    lockElement.textContent = '🔓🔓🔒🔒🔒🔒';
+                    lockElement.textContent = '🔓🔓🔒🔒🔒🔒🔒';
                 } else if (locksInRoom === 3) {
-                    lockElement.textContent = '🔓🔓🔓🔒🔒🔒';
+                    lockElement.textContent = '🔓🔓🔓🔒🔒🔒🔒';
                 } else if (locksInRoom === 4) {
-                    lockElement.textContent = '🔓🔓🔓🔓🔒🔒';
+                    lockElement.textContent = '🔓🔓🔓🔓🔒🔒🔒';
                 } else if (locksInRoom === 5) {
-                    lockElement.textContent = '🔓🔓🔓🔓🔓🔒';
+                    lockElement.textContent = '🔓🔓🔓🔓🔓🔒🔒';
                 } else if (locksInRoom === 6) {
-                    lockElement.textContent = '🔓🔓🔓🔓🔓🔓';
+                    lockElement.textContent = '🔓🔓🔓🔓🔓🔓🔒';
+                } else if (locksInRoom === 7) {
+                    lockElement.textContent = '🔓🔓🔓🔓🔓🔓🔓';
                 }
             }
         }
@@ -397,6 +399,37 @@ function getRiddleData(lockId, roomType) {
         }
         
         if (lockIndex === 3) {
+            // Декабрь - про Гринча
+            return {
+                question: 'кем я стал 16 декабря? (в этот день вы с Женей были снегурочкой и дедом морозом)',
+                checkAnswer: function(answer) {
+                    const trimmed = answer.trim().toLowerCase();
+                    
+                    // Правильные ответы
+                    if (['гринч', 'гринчем'].includes(trimmed)) {
+                        return { success: true, message: 'дап, я был Гринчем :)' };
+                    }
+                    if (['гоблином', 'страшилой', 'страхолюдиной', 'хуйней'].includes(trimmed)) {
+                        return { success: true, message: 'обидно.. 😥, ну и иди к следующим вопросам 😖' };
+                    }
+                    
+                    // Неправильные ответы
+                    if (['чертом', 'чорт'].includes(trimmed)) {
+                        return { success: false, message: 'черт я то да, но а именно в этот день я кем стал 🫩?' };
+                    }
+                    if (['снегурочкой', 'снегурочка'].includes(trimmed)) {
+                        return { success: false, message: 'не, снегурочка у нас Женя' };
+                    }
+                    if (['дедом', 'дедом морозом', 'морозом', 'дед мороз'].includes(trimmed)) {
+                        return { success: false, message: ' что с памятью? 🙄, дедом морозом была ты' };
+                    }
+                    
+                    return { success: false, message: 'неее, ну зелененький такой' };
+                }
+            };
+        }
+        
+        if (lockIndex === 4) {
             // Январь - про бравл старс
             return {
                 question: 'Во что мы стояли и играли 4 января прямо посреди казика?',
@@ -404,10 +437,13 @@ function getRiddleData(lockId, roomType) {
                     const trimmed = answer.trim().toLowerCase();
                     
                     // Правильные ответы
-                    if (trimmed === 'бравл старс' || trimmed === 'brawl stars') {
-                        return { success: true, message: trimmed === 'brawl stars' ? 'английский подъехал, засчитано 😌' : 'дя дя, правильна, умняца' };
+                    if (trimmed === 'в бравл' || trimmed === 'бравл старс') {
+                        return { success: true, message: 'дя дя, правильна, умняца' };
                     }
-                    if (trimmed === 'в бравл' || trimmed === 'бравл') {
+                    if (trimmed === 'brawl stars') {
+                        return { success: true, message: 'английский подъехал, засчитано 😌' };
+                    }
+                    if (trimmed === 'бравл') {
                         return { success: true, message: 'по-простому, но верно :>' };
                     }
                     
@@ -427,7 +463,7 @@ function getRiddleData(lockId, roomType) {
             };
         }
         
-        if (lockIndex === 4) {
+        if (lockIndex === 5) {
             // Февраль - про 14 февраля
             return {
                 question: 'Какой самый важный день февраля стал особенным, потому что в этом году у меня есть ты?',
@@ -458,7 +494,7 @@ function getRiddleData(lockId, roomType) {
             };
         }
         
-        if (lockIndex === 5) {
+        if (lockIndex === 6) {
             // Март - про день рождения
             return {
                 question: 'Чей день рождения 6 марта — самый важный праздник?',
@@ -617,12 +653,12 @@ function checkRoomCompletion(roomType) {
         return;
     }
     
-    const roomLocks = ['memories_0', 'memories_1', 'memories_2', 'memories_3', 'memories_4', 'memories_5'];
+    const roomLocks = ['memories_0', 'memories_1', 'memories_2', 'memories_3', 'memories_4', 'memories_5', 'memories_6'];
     
     const roomSpecificLocks = roomLocks.filter(lock => lock.startsWith(roomType));
     const unlockedInRoom = roomSpecificLocks.filter(lock => gameState.locks[roomType].includes(lock));
     
-    const requiredLocks = roomType === 'memories' ? 6 : 3;
+    const requiredLocks = roomType === 'memories' ? 7 : 3;
     
     if (unlockedInRoom.length === requiredLocks) {
         gameState.roomsCompleted[roomType] = true;
@@ -776,7 +812,7 @@ function showSecretMessage() {
     const secretDiv = document.createElement('div');
     secretDiv.className = 'secret-message';
     secretDiv.style.display = 'block';
-    secretDiv.textContent = 'Зай, ты что тут пытаешься найти? 🤔';
+    secretDiv.textContent = 'Ты нашла секрет 🥹';
     
     document.body.appendChild(secretDiv);
     

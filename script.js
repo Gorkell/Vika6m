@@ -770,7 +770,7 @@ function showSecretMessage() {
     const secretDiv = document.createElement('div');
     secretDiv.className = 'secret-message';
     secretDiv.style.display = 'block';
-    secretDiv.textContent = 'Ты нашла секрет 🥹';
+    secretDiv.textContent = 'Интерестный факт, ученые доказали что ты самая самая лучшая 😘';
     
     document.body.appendChild(secretDiv);
     

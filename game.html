@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игровая Комната - Магическая Комната</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .game-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .game-question {
+            font-size: 1.4rem;
+            color: #ffd93d;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .game-subtitle.small {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #volumeText {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            text-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        #game {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            cursor: grab;
+        }
+
+        #game:active {
+            cursor: grabbing;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-label {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .slider {
+            writing-mode: bt-lr;
+            -webkit-appearance: slider-vertical;
+            appearance: none;
+            width: 30px;
+            height: 400px;
+            background: linear-gradient(to top, #ff6b6b, #4ecdc4);
+            border-radius: 15px;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .game-instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-instructions h3 {
+            margin-bottom: 15px;
+            color: #4ecdc4;
+        }
+
+        .game-instructions p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .popup {
+            position: absolute;
+            font-size: 32px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: float 3s ease-out forwards;
+            z-index: 1000;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        @keyframes float {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+        }
+
+        .score-popup {
+            animation: scoreFloat 4s ease-out forwards;
+        }
+
+        @keyframes scoreFloat {
+            0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+            50% { transform: translateY(-40px) scale(1.2) rotate(5deg); }
+            100% { opacity: 0; transform: translateY(-100px) scale(0.8) rotate(-5deg); }
+        }
+
+        .lock-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .lock-info {
+            color: white;
+        }
+
+        .lock-info h3 {
+            color: #ffd93d;
+            margin-bottom: 10px;
+        }
+
+        .lock-info p {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .skip-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .skip-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            max-width: 400px;
+        }
+
+        .skip-content h3 {
+            margin-bottom: 30px;
+            font-size: 1.3rem;
+        }
+
+        .skip-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .skip-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: bold;
+        }
+
+        .skip-button.yes {
+            background: rgba(255, 107, 107, 0.3);
+            border: 2px solid rgba(255, 107, 107, 0.5);
+        }
+
+        .skip-button.yes:hover {
+            background: rgba(255, 107, 107, 0.5);
+        }
+
+        .skip-button.no {
+            background: rgba(78, 205, 196, 0.3);
+            border: 2px solid rgba(78, 205, 196, 0.5);
+        }
+
+        .skip-button.no:hover {
+            background: rgba(78, 205, 196, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .game-wrapper {
+                flex-direction: column;
+            }
+            
+            .slider {
+                writing-mode: initial;
+                -webkit-appearance: initial;
+                appearance: none;
+                width: 300px;
+                height: 30px;
+            }
+            
+            #game {
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="magic-room">
+        <div class="stars"></div>
+        <div class="floating-hearts"></div>
+        
+        <a href="index.html" class="back-button">← Назад</a>
+        <button class="reset-room-button" onclick="resetGameRoom()">🔄 Сбросить игру</button>
+        
+        <header class="main-header">
+            <h1 class="magical-title">Игровая Комната</h1>
+            <p class="subtitle">Где ответы прячутся в игре</p>
+        </header>
+
+        <main class="game-container">
+            <div class="game-header">
+                <h2 class="game-title">� Главный вопрос дня!</h2>
+                <p class="game-question">Сколько же лет исполнилось сегодня, 6 марта, Самой присамой красивой на свете? 🤔</p>
+                <p class="game-subtitle small">ну, просто написать скучно, поэтому цифру выбей игрой!</p>
+                <div id="volumeText">0 очков</div>
+            </div>
+
+            <div class="game-wrapper">
+                <canvas id="game" width="500" height="400"></canvas>
+            </div>
+
+            <div class="game-instructions">
+                <h3>🎮 Как играть</h3>
+                <p>🏀 <strong>Тяни мяч</strong> - зажми и тяни для прицеливания</p>
+                <p>🎯 <strong>Бросай</strong> - отпусти, чтобы бросить мяч</p>
+                <p>🏆 <strong>Попади в корзину</strong> - счёт +1</p>
+                <p>💔 <strong>Промах</strong> - просто попробуй еще!</p>
+                <p>⭐ <strong>Цель</strong> - набери нужное количество очков для получения ключа!</p>
+            </div>
+
+            <!-- Замок, который открывается при 19 очках -->
+            <div class="lock-section" id="lock-section">
+                <div class="floating-lock game-lock-0" id="game-lock">🔒</div>
+                <div class="lock-info">
+                    <h3>🗝️ Ключ от комнаты</h3>
+                    <p>Набери 19 очков, чтобы получить ответ на главный вопрос!</p>
+                </div>
+            </div>
+
+            <!-- Диалог пропуска игры -->
+            <div class="skip-dialog" id="skip-dialog" style="display: none;">
+                <div class="skip-content">
+                    <h3>ты хочешь завершить игру сразу? ☹️</h3>
+                    <div class="skip-buttons">
+                        <button class="skip-button yes" onclick="skipGame(true)">да</button>
+                        <button class="skip-button no" onclick="skipGame(false)">нет</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Глобальные переменные для canvas
+        let canvas, ctx, volumeText;
+
+        // Глобальные функции для кнопок
+        function skipGame(shouldSkip) {
+            const skipDialog = document.getElementById('skip-dialog');
+            if (!skipDialog) return;
+            
+            if (shouldSkip) {
+                showSkipOption = false;
+                skipDialog.style.display = 'none';
+                
+                showGameMessage("эхх, пэчалка 😖", "#ff6b6b");
+                createParticles(250, 200, "#ff6b6b", 20);
+                
+                // Сразу даём 19 очков
+                setVolume(19);
+                unlockGameLock();
+            } else {
+                // Нажали "нет" - просто скрываем диалог
+                showSkipOption = false;
+                skipDialog.style.display = 'none';
+                console.log("User clicked NO, skipAttempts was:", skipAttempts);
+                
+                // Показываем смешной попап
+                if (skipAttempts === 2) {
+                    showGameMessage("ты же сама нажала нет! 😋", "#ffd93d");
+                    createParticles(250, 200, "#ffd93d", 10);
+                } else if (skipAttempts >= 3) {
+                    showGameMessage("ну ладно, продолжай тестировать 😏", "#4ecdc4");
+                    createParticles(250, 200, "#4ecdc4", 10);
+                }
+            }
+        }
+
+        function resetGameRoom() {
+            volume = 0;
+            setVolume(0);
+            resetBall();
+            
+            // Сбрасываем замок
+            const lockElement = document.getElementById('game-lock');
+            if (lockElement) {
+                lockElement.textContent = '🔒';
+                lockElement.classList.remove('unlocked');
+            }
+            
+            // Очищаем глобальное состояние
+            if (gameState.locks.game) {
+                gameState.locks.game = [];
+            }
+            gameState.roomsCompleted.game = false;
+            
+            saveGameState();
+            showNotification('Игра сброшена! Начни заново 🔄');
+        }
+
+        function resetBall() {
+            if (ball && canvas) {
+                ball.x = 100;
+                ball.y = 330;
+                ball.vx = 0;
+                ball.vy = 0;
+                ball.dragging = false;
+                ball.thrown = false;
+                ball.trail = [];
+                scored = false;
+                passedAbove = false;
+                canvas.style.cursor = "grab";
+                console.log("Ball reset completed");
+            }
+        }
+
+        function showGameMessage(text, color) {
+            // Удаляем предыдущее сообщение если есть
+            const existingMsg = document.getElementById('game-message');
+            if (existingMsg) {
+                existingMsg.remove();
+            }
+            
+            // Создаем новое сообщение
+            const message = document.createElement('div');
+            message.id = 'game-message';
+            message.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 15px;
+                font-size: 1.2rem;
+                font-weight: bold;
+                z-index: 3000;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: messageAppear 0.3s ease-out;
+                max-width: 80%;
+                text-align: center;
+            `;
+            message.textContent = text;
+            
+            document.body.appendChild(message);
+            
+            // Автоматически убираем через 3 секунды
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        // Частицы для эффектов
+        let particles = [];
+
+        function createParticles(x, y, color, count = 10) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 1,
+                    color: color,
+                    size: Math.random() * 4 + 2
+                });
+            }
+        }
+
+        function updateParticles() {
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.2;
+                p.life -= 0.02;
+                p.size *= 0.98;
+            });
+        }
+
+        // Глобальные переменные для игры
+        let ball = {
+            x: 100,
+            y: 330,
+            r: 15,
+            vx: 0,
+            vy: 0,
+            dragging: false,
+            thrown: false,
+            trail: []
+        };
+
+        const gravity = 0.4;
+        const rimLeft = {x: 370, y: 150, r: 6};
+        const rimRight = {x: 450, y: 150, r: 6};
+        const rimY = 150;
+
+        let scored = false;
+        let passedAbove = false;
+        let dragToBasketAttempts = 0;
+        let showSkipOption = false;
+        let skipAttempts = 0;
+
+        function drawParticles() {
+            if (!ctx) return; // Проверяем, что ctx определен
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+        }
+
+        // Глобальная переменная для объема
+        let volume = 0;
+
+        function setVolume(v) {
+            volume = Math.max(0, Math.min(30, v));
+            if (volumeText) {
+                volumeText.textContent = volume + " очков";
+                
+                // Меняем цвет в зависимости от счёта
+                if (volume >= 19) {
+                    volumeText.style.color = "#ffd93d";
+                    volumeText.style.textShadow = "0 0 15px rgba(255, 217, 61, 0.5)";
+                    // Открываем замок при достижении 19 очков
+                    unlockGameLock();
+                } else if (volume >= 10) {
+                    volumeText.style.color = "#ff6b6b";
+                    volumeText.style.textShadow = "0 0 15px rgba(255, 107, 107, 0.5)";
+                } else {
+                    volumeText.style.color = "#4ecdc4";
+                    volumeText.style.textShadow = "0 0 15px rgba(78, 205, 196, 0.5)";
+                }
+            }
+        }
+
+        function unlockGameLock() {
+            console.log('unlockGameLock called');
+            console.log('gameState:', gameState);
+            
+            const gameLock = document.getElementById('game-lock');
+            if (gameLock && gameLock.textContent === '🔒') {
+                gameLock.textContent = '🔓';
+                gameLock.classList.add('unlocked');
+                
+                // Обновляем глобальное состояние
+                if (!gameState.locks.game) {
+                    gameState.locks.game = [];
+                }
+                if (!gameState.locks.game.includes('game_0')) {
+                    gameState.locks.game.push('game_0');
+                }
+                gameState.roomsCompleted.game = true;
+                
+                console.log('Updated gameState:', gameState);
+                
+                showNotification('Ключ получен! Ответ: 19 🎉');
+                saveGameState();
+                
+                console.log('Game state saved');
+                
+                // Проверяем завершение комнаты
+                if (typeof checkRoomCompletion === 'function') {
+                    checkRoomCompletion('game');
+                }
+                
+                // Создаем праздничные частицы
+                createParticles(250, 200, "#ffd93d", 20);
+            }
+        }
+
+        // Ждём полной загрузки DOM и инициализации gameState
+        document.addEventListener('DOMContentLoaded', function() {
+            // Убедимся, что gameState инициализирован
+            if (typeof gameState === 'undefined') {
+                console.error('gameState не определен!');
+                return;
+            }
+            
+            console.log('gameState initialized:', gameState);
+            
+            // Инициализируем canvas переменные
+            canvas = document.getElementById("game");
+            ctx = canvas.getContext("2d");
+            volumeText = document.getElementById("volumeText");
+            
+            // Устанавливаем начальный объем
+            setVolume(0);
+        
+        // Инициализация замка игры
+        const gameLock = document.getElementById('game-lock');
+        if (gameLock) {
+            if (gameState.locks.game && gameState.locks.game.includes('game_0')) {
+                gameLock.textContent = '🔓';
+                gameLock.classList.add('unlocked');
+            }
+            
+            gameLock.addEventListener('click', function() {
+                if (!gameLock.classList.contains('unlocked')) {
+                    // Проверяем счёт
+                    if (volume >= 1 && volume <= 2) {
+                        showGameMessage("не ну мало, котя, играй, я же старался 😣", "#ff6b6b");
+                        createParticles(250, 200, "#ff6b6b", 15);
+                    } else if (volume >= 3 && volume <= 9) {
+                        showGameMessage("Дроздопермочка, сайт не для детей!", "#ffd93d");
+                        createParticles(250, 200, "#ffd93d", 15);
+                    } else if (volume >= 10 && volume <= 18) {
+                        showGameMessage("еще чуть чуть, ты скоро угадаешь сколько тебе лет, солнце 😘", "#4ecdc4");
+                        createParticles(250, 200, "#4ecdc4", 15);
+                    } else if (volume < 19) {
+                        showGameMessage('Сначала набери больше очков в игре!', "#4ecdc4");
+                    }
+                }
+            });
+        }
+
+        function drawCircle(obj, color, glow = false) {
+            if (glow) {
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 15;
+            }
+            ctx.beginPath();
+            ctx.arc(obj.x, obj.y, obj.r, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        function drawTrail() {
+            ball.trail.forEach((point, index) => {
+                ctx.globalAlpha = index / ball.trail.length * 0.5;
+                ctx.fillStyle = "#4ecdc4";
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, ball.r * (index / ball.trail.length), 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+        }
+
+        function popup(text, color) {
+            const p = document.createElement("div");
+            p.className = "popup score-popup";
+            p.style.left = (ball.x + canvas.offsetLeft) + "px";
+            p.style.top = (ball.y + canvas.offsetTop - 20) + "px";
+            p.style.color = color;
+            p.innerText = text;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 4000);
+            
+            // Для отладки
+            console.log("Popup:", text);
+        }
+
+        function collision(circle) {
+            let dx = ball.x - circle.x;
+            let dy = ball.y - circle.y;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < ball.r + circle.r) {
+                let angle = Math.atan2(dy, dx);
+                let speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                ball.vx = Math.cos(angle) * speed * 0.8;
+                ball.vy = Math.sin(angle) * speed * 0.8;
+                
+                // Эффект частиц при столкновении
+                createParticles(ball.x, ball.y, "#ff6b6b", 5);
+            }
+        }
+
+        // Проверка, перетаскивают ли мяч в кольцо
+        function checkDragToBasket() {
+            const basketCenterX = (rimLeft.x + rimRight.x) / 2;
+            const basketCenterY = rimY;
+            const distance = Math.sqrt(Math.pow(ball.x - basketCenterX, 2) + Math.pow(ball.y - basketCenterY, 2));
+            
+            // Если мяч близко к центру кольца
+            if (distance < 30 && ball.dragging) {
+                dragToBasketAttempts++;
+                console.log("Drag to basket attempt:", dragToBasketAttempts);
+                
+                // Сразу сбрасываем перетаскивание
+                ball.dragging = false;
+                ball.thrown = false;
+                canvas.style.cursor = "grab";
+                
+                if (dragToBasketAttempts === 1) {
+                    // Первый раз - даём очко
+                    if (volume < 30) {
+                        setVolume(volume + 1);
+                        popup("+1!", "#4ecdc4");
+                        createParticles(ball.x, ball.y, "#4ecdc4", 15);
+                    }
+                    scored = true;
+                    setTimeout(resetBall, 1000); // Даём время увидеть попап
+                } else if (dragToBasketAttempts === 2) {
+                    // Второй раз - смешное сообщение
+                    popup("я старался сайт делать, баги это тоже не баги 😋", "#ffd93d");
+                    createParticles(ball.x, ball.y, "#ffd93d", 10);
+                    scored = true;
+                    setTimeout(resetBall, 1000);
+                } else if (dragToBasketAttempts === 3) {
+                    // Третий раз - предложение пропустить
+                    popup("я так понимаю проходить это тебе надоело.. 😭", "#ff6b6b");
+                    createParticles(ball.x, ball.y, "#ff6b6b", 10);
+                    scored = true;
+                    setTimeout(() => {
+                        resetBall();
+                        showSkipDialog();
+                    }, 1000);
+                } else if (dragToBasketAttempts > 3) {
+                    // Последующие попытки - снова показываем диалог
+                    popup("опять мышкой таскаешь, но зачем?..🤔", "#4ecdc4");
+                    createParticles(ball.x, ball.y, "#4ecdc4", 10);
+                    scored = true;
+                    setTimeout(() => {
+                        resetBall();
+                        showSkipDialog();
+                    }, 1000);
+                }
+                
+                return true;
+            }
+            return false;
+        }
+
+        function showSkipDialog() {
+            showSkipOption = true;
+            skipAttempts++; // Добавляем инкремент сюда!
+            console.log("Showing skip dialog, attempt:", skipAttempts);
+            
+            const skipDialog = document.getElementById('skip-dialog');
+            if (!skipDialog) {
+                console.log("Skip dialog not found!");
+                return;
+            }
+            
+            const skipContent = skipDialog.querySelector('.skip-content h3');
+            if (!skipContent) {
+                console.log("Skip content h3 not found!");
+                return;
+            }
+            
+            if (skipAttempts === 1) {
+                // Первое появление
+                skipContent.textContent = "вы хотите завершить игру сразу? ☹️";
+            } else if (skipAttempts === 2) {
+                // Второе появление после нажатия "нет"
+                skipContent.textContent = "ты же сама нажала нет, все таки хочешь завершить этап? 😣";
+            } else if (skipAttempts >= 3) {
+                // Третье и последующие появления
+                skipContent.textContent = "лаааадно, решила мой сайт потестить? я просто оставлю это тут";
+            }
+            
+            skipDialog.style.display = 'flex';
+            console.log("Skip dialog displayed with text:", skipContent.textContent);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, 500, 400);
+
+            // Рисуем след мяча
+            if (ball.thrown) {
+                drawTrail();
+            }
+
+            // Рисуем корзину с эффектом свечения
+            drawCircle(rimLeft, "#ff6b6b", true);
+            drawCircle(rimRight, "#ff6b6b", true);
+            
+            // Сетка корзины
+            ctx.strokeStyle = "#ff6b6b";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(rimLeft.x, rimY);
+            ctx.lineTo(rimRight.x, rimY);
+            ctx.stroke();
+            
+            // Сетка
+            ctx.strokeStyle = "rgba(255, 107, 107, 0.3)";
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.moveTo(rimLeft.x + i * 16, rimY);
+                ctx.lineTo(rimLeft.x + i * 16 - 12, rimY + 30);
+                ctx.stroke();
+            }
+
+            // Рисуем частицы
+            drawParticles();
+
+            // Рисуем мяч с эффектом
+            drawCircle(ball, "#555");
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText("🏀", ball.x - 12, ball.y + 7);
+
+            // Эффект прицеливания
+            if (ball.dragging) {
+                ctx.strokeStyle = "rgba(78, 205, 196, 0.5)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(ball.x, ball.y);
+                ctx.lineTo(100, 330);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
+        function update() {
+            // Физика работает ТОЛЬКО после броска
+            if (ball.thrown) {
+                ball.vy += gravity;
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+                
+                // Добавляем точку в след
+                ball.trail.push({x: ball.x, y: ball.y});
+                if (ball.trail.length > 10) {
+                    ball.trail.shift();
+                }
+            }
+
+            // Границы
+            if (ball.x - ball.r < 0) {
+                ball.x = ball.r;
+                ball.vx *= -0.6;
+                createParticles(ball.x, ball.y, "#4ecdc4", 3);
+            }
+            if (ball.x + ball.r > 500) {
+                ball.x = 500 - ball.r;
+                ball.vx *= -0.6;
+                createParticles(ball.x, ball.y, "#4ecdc4", 3);
+            }
+            if (ball.y - ball.r < 0) {
+                ball.y = ball.r;
+                ball.vy *= -0.6;
+                createParticles(ball.x, ball.y, "#4ecdc4", 3);
+            }
+
+            // Пол
+            if (ball.y + ball.r > 400 && ball.thrown) {
+                ball.y = 400 - ball.r;
+                if (!scored) {
+                    popup("ничего страшного, попробуй еще котя :>", "#ffd93d");
+                    createParticles(ball.x, ball.y, "#ffd93d", 5);
+                    scored = true;
+                    setTimeout(resetBall, 700);
+                }
+            }
+
+            collision(rimLeft);
+            collision(rimRight);
+
+            if (ball.y < rimY) passedAbove = true;
+
+            // Попадание в корзину - более строгая проверка
+            if (
+                passedAbove &&
+                ball.y > rimY + 5 &&
+                ball.y < rimY + 50 && // Ограничиваем высоту проверки
+                ball.x > rimLeft.x + 5 && // Уменьшаем допустимую зону по горизонтали
+                ball.x < rimRight.x - 5 &&
+                ball.vy > 0 && // Мяч должен двигаться вниз
+                !scored
+            ) {
+                scored = true;
+                if (volume < 30) {
+                    setVolume(volume + 1);
+                    popup("+1!", "#4ecdc4");
+                    createParticles(ball.x, ball.y, "#4ecdc4", 15);
+                    
+                    // Проверка достижения 19 очков
+                    if (volume === 19) {
+                        setTimeout(() => {
+                            popup("🎉 19 очков! 🎉", "#ffd93d");
+                            createParticles(250, 200, "#ffd93d", 30);
+                        }, 500);
+                    }
+                }
+                setTimeout(resetBall, 700);
+            }
+
+            updateParticles();
+            draw();
+            requestAnimationFrame(update);
+        }
+
+        canvas.onmousedown = e => {
+            if (ball.thrown) return;
+            let dx = e.offsetX - ball.x;
+            let dy = e.offsetY - ball.y;
+            if (Math.sqrt(dx * dx + dy * dy) < ball.r) {
+                ball.dragging = true;
+                canvas.style.cursor = "grabbing";
+            }
+        };
+
+        canvas.onmousemove = e => {
+            if (ball.dragging && !scored) {
+                ball.x = e.offsetX;
+                ball.y = e.offsetY;
+                
+                // Проверяем, не тащат ли мяч в кольцо
+                if (checkDragToBasket()) {
+                    return; // Если засчитали, выходим
+                }
+            }
+        };
+
+        canvas.onmouseup = e => {
+            if (ball.dragging) {
+                ball.vx = (ball.x - 100) * 0.15;
+                ball.vy = (ball.y - 330) * 0.15;
+                ball.dragging = false;
+                ball.thrown = true;
+                canvas.style.cursor = "grab";
+                createParticles(ball.x, ball.y, "#4ecdc4", 5);
+            }
+        };
+
+        // Touch события для мобильных
+        canvas.ontouchstart = e => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            if (ball.thrown) return;
+            let dx = x - ball.x;
+            let dy = y - ball.y;
+            if (Math.sqrt(dx * dx + dy * dy) < ball.r) {
+                ball.dragging = true;
+            }
+        };
+
+        canvas.ontouchmove = e => {
+            e.preventDefault();
+            if (ball.dragging && !scored) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                ball.x = touch.clientX - rect.left;
+                ball.y = touch.clientY - rect.top;
+                
+                // Проверяем, не тащат ли мяч в кольцо
+                if (checkDragToBasket()) {
+                    return; // Если засчитали, выходим
+                }
+            }
+        };
+
+        canvas.ontouchend = e => {
+            e.preventDefault();
+            if (ball.dragging) {
+                ball.vx = (ball.x - 100) * 0.15;
+                ball.vy = (ball.y - 330) * 0.15;
+                ball.dragging = false;
+                ball.thrown = true;
+                createParticles(ball.x, ball.y, "#4ecdc4", 5);
+            }
+        };
+
+        update();
+        }); // Закрываем DOMContentLoaded
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магическая Комната - Подарок</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="magic-room">
+        <div class="stars"></div>
+        <div class="floating-hearts"></div>
+        
+        <header class="main-header">
+            <h1 class="magical-title">Магическая Комната</h1>
+            <p class="subtitle">С днем рождения Викуся :> 😘🥳</p>
+        </header>
+
+        <main class="room-selector">
+            <div class="rooms-grid">
+                <a href="memories.html" class="room-card" data-room="memories">
+                    <div class="room-icon">💭</div>
+                    <h3>Комната Воспоминаний</h3>
+                    <p>Истории там всякие вооот</p>
+                    <div class="lock-status" id="memories-lock"></div>
+                </a>
+
+                <a href="heart.html" class="room-card" data-room="heart">
+                    <div class="room-icon">❤️</div>
+                    <h3>Комната Сердце</h3>
+                    <p>Почти финал...</p>
+                    <div class="lock-status" id="heart-lock">❤️</div>
+                </a>
+
+                <a href="game.html" class="room-card" data-room="game">
+                    <div class="room-icon">🎮</div>
+                    <h3>Игровая Комната</h3>
+                    <p>Магическая баскетбольная арена</p>
+                    <div class="lock-status" id="game-lock">🎮</div>
+                </a>
+
+                <a href="final.html" class="room-card final-room" data-room="final" id="final-room">
+                    <div class="room-icon">🌟</div>
+                    <h3>Финальная Комната</h3>
+                    <p>Завершение путешествия</p>
+                    <div class="lock-status" id="final-lock">🔒</div>
+                </a>
+            </div>
+        </main>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+            <span class="progress-text" id="progress-text">0% завершено</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

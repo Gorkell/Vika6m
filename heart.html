@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Комната Сердце - Магическая Комната</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Стили для комнаты сердца с тёплой атмосферой */
+        .heart-room {
+            background: linear-gradient(135deg, #2d0a0a 0%, #4a0f0f 50%, #2d0a0a 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        .heart-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .heart-svg {
+            width: 180px;
+            height: 180px;
+            cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 100, 0.3));
+            transition: all 0.4s ease;
+            animation: heartbeat 3.5s ease-in-out infinite;
+        }
+
+        .heart-svg:hover {
+            filter: drop-shadow(0 0 25px rgba(255, 0, 100, 0.5));
+            transform: scale(1.02);
+        }
+
+        .heart-svg.beating {
+            animation: heartbeat-strong 0.8s ease-in-out;
+        }
+
+        .heart-svg.opening {
+            animation: heart-opening 2s ease-out forwards;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes heartbeat-strong {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            40% { transform: scale(1.08); }
+            60% { transform: scale(1.12); }
+            80% { transform: scale(1.05); }
+        }
+
+        @keyframes heart-opening {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .heart-flash {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255, 0, 100, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: flash 0.6s ease-out;
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .heart-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 0, 100, 0.3);
+            border-radius: 50%;
+            animation: float-particle 12s linear infinite;
+        }
+
+        .heart-particle.heart {
+            background: rgba(255, 0, 100, 0.6);
+            width: 4px;
+            height: 4px;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .heart-text {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.2rem;
+            font-style: italic;
+            text-align: center;
+            max-width: 550px;
+            opacity: 0;
+            animation: fadeIn 1.2s ease-in forwards;
+            text-shadow: 0 0 10px rgba(255, 0, 100, 0.3);
+            line-height: 1.6;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .heart-hint {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in forwards, fadeOut 2s ease-out 8s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .final-button {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff0064 0%, #ff0044 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            box-shadow: 0 5px 20px rgba(255, 0, 100, 0.3);
+        }
+
+        .final-button:hover {
+            background: linear-gradient(135deg, #ff0088 0%, #ff0066 100%);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .heart-lock {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 20;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+            pointer-events: none;
+        }
+
+        .heart-lock.show {
+            opacity: 1;
+            pointer-events: auto;
+            animation: lock-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes lock-glow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)); }
+        }
+
+        .heart-riddle-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .heart-riddle-content {
+            background: linear-gradient(135deg, #2d0a0a 0%, #4a0f0f 100%);
+            padding: 40px;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 0, 100, 0.3);
+            text-align: center;
+            max-width: 450px;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .heart-riddle-input {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 0, 100, 0.5);
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            font-size: 1.1rem;
+            font-family: 'Georgia', serif;
+        }
+
+        .heart-riddle-button {
+            background: linear-gradient(135deg, #ff0064 0%, #ff0044 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            margin: 10px 5px;
+        }
+
+        .heart-riddle-button:hover {
+            background: linear-gradient(135deg, #ff0088 0%, #ff0066 100%);
+            transform: scale(1.05);
+        }
+
+        .secret-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffd700;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #ffd700;
+            font-size: 1.2rem;
+            text-align: center;
+            z-index: 3000;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        .fast-click-warning {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 100, 0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            z-index: 1500;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        .fade-to-final {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(45, 10, 10, 0.95) 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            flex-direction: column;
+        }
+
+        .fade-text {
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 2s ease-in forwards;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body class="heart-room">
+    <div class="stars"></div>
+    <div class="heart-particles" id="heartParticles"></div>
+    
+    <a href="index.html" class="back-button">← Назад</a>
+    <button class="reset-room-button" onclick="resetRoom('heart')">🔄 Сбросить комнату</button>
+    
+    <header class="main-header">
+        <h1 class="magical-title">Комната Сердце</h1>
+        <p class="subtitle">Почти финал...</p>
+    </header>
+
+    <main class="content-container">
+        <div class="heart-container">
+            <div class="heart-flash" id="heartFlash"></div>
+            <svg class="heart-svg" id="heartSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100,170 C30,130 10,90 10,60 C10,30 30,10 60,10 C80,10 95,20 100,30 C105,20 120,10 140,10 C170,10 190,30 190,60 C190,90 170,130 100,170 Z" 
+                      fill="rgba(255, 0, 100, 0.8)" 
+                      stroke="rgba(255, 0, 100, 1)" 
+                      stroke-width="2"/>
+            </svg>
+            
+            <div class="heart-lock" id="heartLock">🔒</div>
+        </div>
+
+        <div class="heart-text" id="heartText"></div>
+        <button class="final-button" id="finalButton" style="display: none;">→ Я готова к финалу</button>
+        <div class="heart-hint" id="heartHint">Нажми на сердце, если готова к правде...</div>
+    </main>
+
+    <!-- Модальное окно загадки -->
+    <div class="heart-riddle-modal" id="heartRiddleModal">
+        <div class="heart-riddle-content">
+            <h3>Финальный вопросик :></h3>
+            <p>Кто же, этот котик, эта принцесса, эта самая красивая девушка на свете которая сейчас читает этот текст?</p>
+            <input type="text" class="heart-riddle-input" id="heartRiddleInput" placeholder="Введи ответ...">
+            <div>
+                <button class="heart-riddle-button" onclick="checkHeartRiddle()">Ответить</button>
+                <button class="heart-riddle-button" onclick="closeHeartRiddle()">Закрыть</button>
+            </div>
+            <div id="heartRiddleMessage"></div>
+        </div>
+    </div>
+
+    
+    <script src="script.js"></script>
+    <script>
+        // Глобальные переменные для комнаты сердца
+        let heartClicks = 0;
+        let lastClickTime = 0;
+        let hintTimeout = null;
+        let fastClickTimeout = null;
+        let isHeartUnlocked = false;
+        let wrongAnswers = 0;
+        let slowClickCount = 0;
+        let selectedText = false;
+
+        const heartTexts = [
+            "Ну что… добралась почти до финала :>",
+            "Я правда старался делая все эти комнаты, и думал я только о тебе",
+            "Я очень надеюсь что тебе понравилось все что я сделал для тебя ❤️",
+            "А помнишь, как всё начиналось?",
+            "Просто случайная встреча в РПМе :)",
+            "И вот я уже сижу и пишу сайт лично для тебя",
+            "Жду каждое твое сообщение",
+            "Иногда смущаюсь, смеюсь, много эмоций",
+            "Для меня время с тобой бесценно :>",
+            "Надеюсь и тебе все это нравится",
+            "Спасибо что читаешь все эти мои мысли",
+            "Я правда очень благодарен тебе",
+            "И вот тебе уже 19, ты по прежнему и навсегда самая прекрасная 😘",
+            "Зная тебя, надеюсь тебе не надоел мой треп",
+            "Нажми на кнопку, когда будешь готова к финалу"
+        ];
+
+        // Инициализация частиц
+        function createHeartParticles() {
+            const container = document.getElementById('heartParticles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'heart-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 12 + 's';
+                particle.style.animationDuration = (12 + Math.random() * 6) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Создание вспышки при клике
+        function createHeartFlash() {
+            const flash = document.getElementById('heartFlash');
+            flash.style.opacity = '0';
+            void flash.offsetWidth;
+            flash.style.opacity = '1';
+            setTimeout(() => {
+                flash.style.opacity = '0';
+            }, 600);
+        }
+
+        // Показать предупреждение о быстрых кликах
+        function showFastClickWarning() {
+            const warning = document.createElement('div');
+            warning.className = 'fast-click-warning';
+            warning.textContent = 'Секундочку, отдышка, смотрю на слишком красивую Девушку';
+            document.body.appendChild(warning);
+            setTimeout(() => warning.remove(), 3000);
+        }
+
+        // Показать секретное сообщение
+        function showSecretMessage(text) {
+            const message = document.createElement('div');
+            message.className = 'secret-message';
+            message.textContent = text;
+            document.body.appendChild(message);
+            setTimeout(() => message.remove(), 4000);
+        }
+
+        // Обработчик клика по сердцу
+        document.addEventListener('DOMContentLoaded', function() {
+            const heartSvg = document.getElementById('heartSvg');
+            const heartText = document.getElementById('heartText');
+            const heartHint = document.getElementById('heartHint');
+            const heartLock = document.getElementById('heartLock');
+            const finalButton = document.getElementById('finalButton');
+
+            createHeartParticles();
+
+            // Обработчик клика по сердцу
+            heartSvg.addEventListener('click', function() {
+                const currentTime = Date.now();
+                
+                // Проверка на слишком быстрые клики
+                if (currentTime - lastClickTime < 1500) {
+                    showFastClickWarning();
+                    return;
+                }
+                
+                // Проверка на медленные клики
+                if (currentTime - lastClickTime > 3000 && slowClickCount >= 2) {
+                    showSecretMessage("Ты чувствуешь, как бьётся?");
+                    slowClickCount = 0;
+                }
+                
+                lastClickTime = currentTime;
+                heartClicks++;
+                slowClickCount++;
+
+                // Анимация удара сердца
+                heartSvg.classList.remove('beating');
+                void heartSvg.offsetWidth;
+                heartSvg.classList.add('beating');
+
+                // Вибрация
+                if (navigator.vibrate) {
+                    navigator.vibrate(300);
+                }
+
+                // Вспышка
+                createHeartFlash();
+
+                // Очистка предыдущих таймеров
+                if (hintTimeout) clearTimeout(hintTimeout);
+                if (fastClickTimeout) clearTimeout(fastClickTimeout);
+
+                // Показываем текст
+                if (heartClicks <= heartTexts.length) {
+                    const text = heartTexts[heartClicks - 1];
+                    heartText.textContent = text;
+                    heartText.style.opacity = '0';
+                    void heartText.offsetWidth;
+                    heartText.style.opacity = '1';
+                }
+
+                // После 15 удара появляется кнопка
+                if (heartClicks === 15) {
+                    heartHint.style.display = 'none';
+                    finalButton.style.display = 'block';
+                }
+
+                // Таймер для подсказки
+                hintTimeout = setTimeout(() => {
+                    if (heartClicks < heartTexts.length) {
+                        showSecretMessage("Мне продолжать или ты боишься узнать правду?");
+                    }
+                }, 7000);
+            });
+
+            // Обработчик клика по кнопке финала
+            finalButton.addEventListener('click', function() {
+                finalButton.style.display = 'none';
+                heartLock.classList.add('show');
+            });
+
+            // Обработчик клика по замочку
+            heartLock.addEventListener('click', function() {
+                if (!isHeartUnlocked) {
+                    document.getElementById('heartRiddleModal').style.display = 'flex';
+                }
+            });
+
+            // Секретные фишки
+            document.addEventListener('keydown', function(e) {
+                // Клавиша H
+                if (e.key === 'h' || e.key === 'H') {
+                    showSecretMessage("Ты — мой хэппи энд.");
+                }
+            });
+
+            // Выделение текста
+            document.addEventListener('mouseup', function() {
+                const selection = window.getSelection().toString();
+                if (selection.length > 0 && !selectedText) {
+                    selectedText = true;
+                    showSecretMessage("Да, это всё правда.");
+                    setTimeout(() => selectedText = false, 5000);
+                }
+            });
+
+            // Наведение на сердце
+            heartSvg.addEventListener('mouseenter', function() {
+                if (!isHeartUnlocked) {
+                    setTimeout(() => {
+                        if (heartSvg.matches(':hover')) {
+                            // Увеличиваем частоту пульсации
+                            heartSvg.style.animationDuration = '2s';
+                        }
+                    }, 5000);
+                }
+            });
+
+            heartSvg.addEventListener('mouseleave', function() {
+                heartSvg.style.animationDuration = '3.5s';
+            });
+
+            // DevTools проверка
+            let devtools = {open: false, orientation: null};
+            setInterval(function(){
+                if(devtools.open){
+                    console.log("Если ты это читаешь — ты слишком умная для меня.");
+                }
+            }, 1000);
+        });
+
+        function checkHeartRiddle() {
+            const input = document.getElementById('heartRiddleInput');
+            const message = document.getElementById('heartRiddleMessage');
+            const answer = input.value.trim().toLowerCase();
+
+            // Правильный ответ
+            if (answer === 'я') {
+                message.innerHTML = '<p style="color: #4ecdc4; font-size: 1.2rem;">Да, это именно так, спасибо за то что ты есть😘</p>';
+                isHeartUnlocked = true;
+                wrongAnswers = 0;
+                
+                // Обновляем gameState
+                if (!gameState.locks.heart) {
+                    gameState.locks.heart = [];
+                }
+                if (!gameState.locks.heart.includes('heart_0')) {
+                    gameState.locks.heart.push('heart_0');
+                }
+                gameState.roomsCompleted.heart = true;
+                saveGameState();
+            } else {
+                // Специальные неправильные ответы
+                const specialWrong = ['ты', 'макс', 'максим', 'черт', 'дурак', 'дебил'];
+                
+                if (specialWrong.includes(answer)) {
+                    message.innerHTML = '<p style="color: #ffd700;">Это я, но я не особо подхожу по данным критериям 😅</p>';
+                } else {
+                    // Обычные неправильные ответы
+                    wrongAnswers++;
+                    let messageText = 'Котя, вписать ты можешь тут много всего, но вариант ответа именно тут только 1 ❤️';
+                    
+                    if (wrongAnswers >= 5) {
+                        messageText = 'Ну котик, тут правда только 1 ответ?';
+                    }
+                    
+                    if (wrongAnswers >= 6) {
+                        messageText = 'Ладно. Подсказка: какая последняя буква алфвита? 🙄';
+                    }
+                    
+                    message.innerHTML = `<p style="color: #ff6b6b;">${messageText}</p>`;
+                }
+            }
+        }
+
+        function closeHeartRiddle() {
+            document.getElementById('heartRiddleModal').style.display = 'none';
+        }
+
+            
+            // Показываем финальный экран
+            setTimeout(() => {
+                // Элемент fadeToFinal был удалён, просто показываем уведомление
+                console.log('Комната сердца пройдена!');
+            }, 1500);
+
+        function openHeartFinal() {
+            document.getElementById('heartRiddleModal').style.display = 'none';
+            
+            // Анимация открытия сердца
+            const heartSvg = document.getElementById('heartSvg');
+            heartSvg.classList.add('opening');
+            
+            // Превращаем частицы в сердечки
+            const particles = document.querySelectorAll('.heart-particle');
+            particles.forEach(particle => {
+                particle.classList.add('heart');
+                particle.style.width = '8px';
+                particle.style.height = '8px';
+            });
+            
+        }
+
+        // Сброс комнаты
+        function resetRoom(roomType) {
+            heartClicks = 0;
+            isHeartUnlocked = false;
+            lastClickTime = 0;
+            wrongAnswers = 0;
+            slowClickCount = 0;
+            selectedText = false;
+            
+            const heartSvg = document.getElementById('heartSvg');
+            const heartText = document.getElementById('heartText');
+            const heartLock = document.getElementById('heartLock');
+            const heartHint = document.getElementById('heartHint');
+            const finalButton = document.getElementById('finalButton');
+            
+            heartSvg.classList.remove('opening');
+            heartText.textContent = '';
+            heartLock.classList.remove('show');
+            heartHint.style.display = 'block';
+            finalButton.style.display = 'none';
+            
+            // Возвращаем частицы в обычное состояние
+            const particles = document.querySelectorAll('.heart-particle');
+            particles.forEach(particle => {
+                particle.classList.remove('heart');
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+            });
+            
+            // Сбрасываем gameState
+            if (gameState.locks.heart) {
+                gameState.locks.heart = [];
+            }
+            gameState.roomsCompleted.heart = false;
+            saveGameState();
+            
+            showNotification('Комната сердца сброшена! Начни заново ❤️');
+        }
+    </script>
+</body>
+</html>

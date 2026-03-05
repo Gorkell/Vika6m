@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация игровых комнат после загрузки gameState
     initializeRoomPages();
     
+    // Инициализация таймера знакомства
+    initializeRelationshipTimer();
+    
     // Инициализация игровой комнаты
     if (window.location.pathname.includes('game')) {
         initializeGameRoom();
@@ -770,7 +773,7 @@ function showSecretMessage() {
     const secretDiv = document.createElement('div');
     secretDiv.className = 'secret-message';
     secretDiv.style.display = 'block';
-    secretDiv.textContent = 'Интерестный факт, ученые доказали что ты самая самая лучшая 😘';
+    secretDiv.textContent = 'Ты нашла секрет 🥹';
     
     document.body.appendChild(secretDiv);
     
@@ -794,3 +797,30 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Инициализация таймера знакомства
+function initializeRelationshipTimer() {
+    // Дата начала знакомства: 25 сентября 2025 года в 01:00
+    const startDate = new Date('2025-09-25T01:00:00');
+    
+    function updateTimer() {
+        const now = new Date();
+        const diff = now - startDate;
+        
+        // Вычисляем дни и часы
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        // Обновляем текст таймера
+        const timerElement = document.getElementById('relationshipTimer');
+        if (timerElement) {
+            timerElement.textContent = `Мы уже знакомы: ${days} дней и ${hours} часов :>`;
+        }
+    }
+    
+    // Обновляем сразу
+    updateTimer();
+    
+    // Обновляем каждый час
+    setInterval(updateTimer, 3600000);
+}

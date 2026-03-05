@@ -5,6 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Комната Воспоминаний - Магическая Комната</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Секретное сообщение любви */
+        .love-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(255, 0, 100, 0.9), rgba(255, 100, 150, 0.9));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            box-shadow: 0 8px 32px rgba(255, 0, 100, 0.4);
+            text-align: center;
+            pointer-events: none;
+        }
+
+        /* Сообщение о ремонте */
+        .construction-message {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, rgba(255, 200, 0, 0.95), rgba(255, 150, 0, 0.95));
+            padding: 20px;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            border-top: 3px solid #ff6b00;
+        }
+
+        .construction-content {
+            text-align: center;
+            position: relative;
+        }
+
+        .construction-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .construction-subtext {
+            font-size: 1rem;
+            color: #555;
+            font-style: italic;
+        }
+
+        .construction-decorations {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .cone, .tape, .worker {
+            font-size: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        .cone {
+            animation-delay: 0s;
+        }
+
+        .tape {
+            animation-delay: 0.3s;
+        }
+
+        .worker {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Стили для заголовка при наведении */
+        .magical-title {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .magical-title:hover {
+            color: rgba(255, 0, 100, 0.8);
+            text-shadow: 0 0 20px rgba(255, 0, 100, 0.5);
+        }
+    </style>
 </head>
 <body>
     <div class="magic-room">
@@ -247,6 +348,108 @@
         </main>
     </div>
 
+    <!-- Секретное сообщение в конце страницы -->
+    <div class="construction-message" id="constructionMessage">
+        <div class="construction-content">
+            <div class="construction-text">тут ведутся ремонтные работы!</div>
+            <div class="construction-subtext">просим вас подняться выше принцесса</div>
+            <div class="construction-decorations">
+                <div class="cone">🚧</div>
+                <div class="tape">🚧</div>
+                <div class="worker">👷‍♀️</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Секретное сообщение любви -->
+    <div class="love-message" id="loveMessage">
+        я тоже тебя люблю котя ❤️
+    </div>
+
     <script src="script.js"></script>
+    <script>
+        // Секретные слова любви
+        const secretLoveWords = ['я тебя люблю', 'лю тя', 'люблю тебя', 'люблю'];
+        
+        // Счётчик кликов на заголовок
+        let titleClickCount = 0;
+        
+        // Обработчик ввода текста для секретных слов
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем обработчик на все поля ввода
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', function(e) {
+                    const value = e.target.value.toLowerCase().trim();
+                    if (secretLoveWords.includes(value)) {
+                        showLoveMessage();
+                        e.target.value = ''; // Очищаем поле
+                    }
+                });
+            });
+            
+            // Обработчик кликов на заголовок
+            const title = document.querySelector('.magical-title');
+            if (title) {
+                title.addEventListener('click', function() {
+                    titleClickCount++;
+                    if (titleClickCount >= 7) {
+                        window.location.href = 'secret.html';
+                    }
+                });
+            }
+            
+            // Обработчик скролла для сообщения о ремонте
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(function() {
+                    checkScrollPosition();
+                }, 100);
+            });
+            
+            // Проверяем позицию при загрузке
+            checkScrollPosition();
+        });
+        
+        // Показать сообщение любви
+        function showLoveMessage() {
+            const message = document.getElementById('loveMessage');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.opacity = '1';
+            }, 100);
+            
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Проверить позицию скролла
+        function checkScrollPosition() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+            const scrollPosition = scrollTop + clientHeight;
+            
+            const constructionMessage = document.getElementById('constructionMessage');
+            
+            // Проверяем долистали ли до самого конца (с небольшим допуском)
+            if (scrollPosition >= scrollHeight - 10) {
+                constructionMessage.style.display = 'block';
+                setTimeout(() => {
+                    constructionMessage.style.opacity = '1';
+                }, 100);
+            } else {
+                constructionMessage.style.opacity = '0';
+                setTimeout(() => {
+                    constructionMessage.style.display = 'none';
+                }, 500);
+            }
+        }
+    </script>
 </body>
 </html>

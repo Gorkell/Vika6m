@@ -3,88 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Финальная Комната - Магическая Комната</title>
+    <title>Финальная комната</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2d0a0a 0%, #0a0000 100%);
+            font-family: 'Georgia', serif;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Частицы-сердечки на фоне */
+        .heart-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 0, 100, 0.6);
+            border-radius: 50%;
+            animation: float-heart 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float-heart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Карточка финала */
+        .final-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(255, 0, 100, 0.2);
+            text-align: center;
+            z-index: 10;
+        }
+
+        /* Текст финала */
+        .final-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            min-height: 300px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .final-text-line {
+            opacity: 0;
+            margin-bottom: 15px;
+        }
+
+        /* Кнопка подарка */
+        .gift-button {
+            background: linear-gradient(135deg, #ff0064 0%, #ff0044 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 0, 100, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .gift-button.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gift-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 0, 100, 0.4);
+        }
+
+        .gift-button.glowing {
+            animation: button-glow 1s ease-in-out infinite;
+        }
+
+        @keyframes button-glow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(255, 0, 100, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(255, 0, 100, 0.6); }
+        }
+
+        /* Анимация перед подарком */
+        .gift-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .gift-animation.show {
+            display: flex;
+        }
+
+        .gift-text {
+            font-size: 2rem;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        .gift-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .gift-heart {
+            position: absolute;
+            font-size: 2rem;
+            animation: fly-heart 2s ease-out forwards;
+        }
+
+        @keyframes fly-heart {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Секретные фишки */
+        .secret-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 100, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+            z-index: 100;
+        }
+
+        .button-hint {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 100, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+            white-space: nowrap;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Easter egg */
+        .easter-egg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 215, 0, 0.9);
+            color: #000;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+            z-index: 2000;
+        }
+    </style>
 </head>
 <body>
-    <div class="magic-room">
-        <div class="stars"></div>
-        <div class="floating-hearts"></div>
-        
-        <a href="index.html" class="back-button">← Назад</a>
-        
-        <header class="main-header">
-            <h1 class="magical-title">Финальная Комната</h1>
-            <p class="subtitle">Завершение нашего волшебного путешествия</p>
-        </header>
+    <!-- Частицы-сердечки на фоне -->
+    <div class="hearts-background"></div>
 
-        <main class="content-container">
-            <section class="content-section">
-                <div class="content-text">
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                </div>
-                <div class="audio-container">
-                    <audio controls>
-                        <source src="audio/final1.mp3" type="audio/mpeg">
-                        <source src="audio/final1.ogg" type="audio/ogg">
-                        Ваш браузер не поддерживает аудио.
-                    </audio>
-                </div>
-                <div class="audio-label">Голосовое сообщение</div>
-            </section>
-
-            <section class="content-section">
-                <div class="content-text">
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                </div>
-                <div class="audio-container">
-                    <audio controls>
-                        <source src="audio/final2.mp3" type="audio/mpeg">
-                        <source src="audio/final2.ogg" type="audio/ogg">
-                        Ваш браузер не поддерживает аудио.
-                    </audio>
-                </div>
-                <div class="audio-label">Голосовое сообщение</div>
-            </section>
-
-            <section class="content-section">
-                <div class="content-text">
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                </div>
-                <div class="audio-container">
-                    <audio controls>
-                        <source src="audio/final3.mp3" type="audio/mpeg">
-                        <source src="audio/final3.ogg" type="audio/ogg">
-                        Ваш браузер не поддерживает аудио.
-                    </audio>
-                </div>
-                <div class="audio-label">Голосовое сообщение</div>
-            </section>
-
-            <section class="content-section">
-                <div class="content-text">
-                    <p>Тут будет текст</p>
-                    <p>Тут будет текст</p>
-                </div>
-                <div class="audio-container">
-                    <audio controls>
-                        <source src="audio/final4.mp3" type="audio/mpeg">
-                        <source src="audio/final4.ogg" type="audio/ogg">
-                        Ваш браузер не поддерживает аудио.
-                    </audio>
-                </div>
-                <div class="audio-label">Голосовое сообщение</div>
-            </section>
-        </main>
+    <!-- Карточка финала -->
+    <div class="final-card">
+        <div class="final-text" id="finalText"></div>
+        <button class="gift-button" id="giftButton">Получить подарок 🎁</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Анимация перед подарком -->
+    <div class="gift-animation" id="giftAnimation">
+        <div class="gift-hearts" id="giftHearts"></div>
+        <div class="gift-text" id="giftText">Секундочку...</div>
+    </div>
+
+    <script>
+        // Тексты финала
+        const finalLines = [
+            "Ну вот ты и дошла до конца этого маленького путешествия :>",
+            "Если ты сейчас читаешь этот текст — значит ты прошла все комнаты",
+            "Я очень старался делая это всё для тебя",
+            "И думал я в этот момент только об одной Девушке",
+            "О самой красивой",
+            "О самой милой",
+            "О самой лучшей",
+            "Спасибо что прошла весь этот путь ❤️"
+        ];
+
+        // Глобальные переменные
+        let currentLine = 0;
+        let giftButtonHoverTime = 0;
+        let giftButtonHoverTimer = null;
+        let backgroundClicks = 0;
+        let inactivityTimer = null;
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            createHeartParticles();
+            startFinalTypewriter();
+            sendCountEvent('final-room-open');
+            startInactivityTimer();
+        });
+
+        // Создание частиц-сердечек на фоне
+        function createHeartParticles() {
+            const container = document.querySelector('.hearts-background');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-particle';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 20 + 's';
+                heart.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        // Эффект печатной машинки
+        function startFinalTypewriter() {
+            const textContainer = document.getElementById('finalText');
+            
+            function showNextLine() {
+                if (currentLine < finalLines.length) {
+                    const line = document.createElement('div');
+                    line.className = 'final-text-line';
+                    line.textContent = finalLines[currentLine];
+                    textContainer.appendChild(line);
+                    
+                    // Плавное появление строки
+                    setTimeout(() => {
+                        line.style.opacity = '1';
+                        line.style.transition = 'opacity 0.5s ease-in';
+                    }, 100);
+                    
+                    currentLine++;
+                    
+                    // Показываем следующую строку через 2 секунды
+                    setTimeout(showNextLine, 2000);
+                } else {
+                    // Показываем кнопку после всех строк
+                    setTimeout(showGiftButton, 1000);
+                }
+            }
+            
+            showNextLine();
+        }
+
+        // Показ кнопки подарка
+        function showGiftButton() {
+            const button = document.getElementById('giftButton');
+            button.classList.add('show');
+            
+            // Обработчики для кнопки
+            button.addEventListener('mouseenter', startButtonHover);
+            button.addEventListener('mouseleave', stopButtonHover);
+            button.addEventListener('click', handleGiftClick);
+        }
+
+        // Таймер бездействия
+        function startInactivityTimer() {
+            inactivityTimer = setTimeout(() => {
+                showSecretMessage("Котя, подарок вообще-то ждёт :>");
+            }, 10000);
+        }
+
+        // Сброс таймера бездействия
+        function resetInactivityTimer() {
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
+            }
+            startInactivityTimer();
+        }
+
+        // Показ секретного сообщения
+        function showSecretMessage(message) {
+            const existing = document.querySelector('.secret-message');
+            if (existing) existing.remove();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'secret-message';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        // Наведение на кнопку
+        function startButtonHover() {
+            resetInactivityTimer();
+            giftButtonHoverTime = 0;
+            
+            giftButtonHoverTimer = setInterval(() => {
+                giftButtonHoverTime++;
+                
+                if (giftButtonHoverTime >= 4) {
+                    clearInterval(giftButtonHoverTimer);
+                    showButtonHint();
+                }
+            }, 1000);
+        }
+
+        // Уход с кнопки
+        function stopButtonHover() {
+            if (giftButtonHoverTimer) {
+                clearInterval(giftButtonHoverTimer);
+            }
+            hideButtonHint();
+        }
+
+        // Показ подсказки кнопки
+        function showButtonHint() {
+            const button = document.getElementById('giftButton');
+            const hint = document.createElement('div');
+            hint.className = 'button-hint';
+            hint.textContent = 'Да да, именно эта кнопка :)';
+            button.appendChild(hint);
+            
+            // Добавляем усиление свечения
+            button.classList.add('glowing');
+        }
+
+        // Скрытие подсказки кнопки
+        function hideButtonHint() {
+            const hint = document.querySelector('.button-hint');
+            if (hint) hint.remove();
+            
+            const button = document.getElementById('giftButton');
+            button.classList.remove('glowing');
+        }
+
+        // Обработка клика по подарку
+        function handleGiftClick() {
+            sendCountEvent('gift-click');
+            startGiftAnimation();
+        }
+
+        // Анимация перед подарком
+        function startGiftAnimation() {
+            const animation = document.getElementById('giftAnimation');
+            const heartsContainer = document.getElementById('giftHearts');
+            const text = document.getElementById('giftText');
+            
+            // Показываем анимацию
+            animation.classList.add('show');
+            
+            // Создаем летящие сердечки
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'gift-heart';
+                    heart.textContent = '❤️';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.top = Math.random() * 100 + '%';
+                    heartsContainer.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 2000);
+                }, i * 200);
+            }
+            
+            // Меняем текст через 2 секунды
+            setTimeout(() => {
+                text.textContent = 'Это для тебя ❤️';
+            }, 2000);
+            
+            // Переход на Telegram через 4 секунды
+            setTimeout(() => {
+                window.open('https://t.me/Gorkell', '_blank');
+            }, 4000);
+        }
+
+        // Клик по фону для Easter egg
+        document.addEventListener('click', function(e) {
+            // Проверяем что клик не по карточке или кнопке
+            if (!e.target.closest('.final-card') && !e.target.closest('.gift-animation')) {
+                backgroundClicks++;
+                
+                if (backgroundClicks >= 5) {
+                    showEasterEgg();
+                    backgroundClicks = 0;
+                }
+            }
+        });
+
+        // Показ Easter egg
+        function showEasterEgg() {
+            const existing = document.querySelector('.easter-egg');
+            if (existing) existing.remove();
+            
+            const egg = document.createElement('div');
+            egg.className = 'easter-egg';
+            egg.textContent = 'Ты любопытная, и мне это нравится';
+            document.body.appendChild(egg);
+            
+            setTimeout(() => egg.remove(), 5000);
+        }
+
+        // Отправка событий в CountAPI
+        function sendCountEvent(event) {
+            // Проверяем что мы на HTTPS или localhost
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                fetch(`https://api.countapi.xyz/hit/love-site-vika/${event}`)
+                    .then(response => response.json())
+                    .then(data => console.log(`Event ${event} sent:`, data))
+                    .catch(error => console.error('Error sending event:', error));
+            } else {
+                console.log(`Event ${event} would be sent (blocked by CORS in local mode)`);
+            }
+        }
+    </script>
 </body>
 </html>

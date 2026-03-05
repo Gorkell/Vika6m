@@ -110,6 +110,21 @@ function initializeMainPage() {
             });
         }
     }
+    
+    // Проверка доступа к комнате сердца
+    const heartRoom = document.getElementById('heart-room');
+    if (heartRoom) {
+        const requiredCompleted = gameState.roomsCompleted.memories && 
+                               gameState.roomsCompleted.game;
+        
+        if (!requiredCompleted) {
+            heartRoom.classList.add('locked');
+            heartRoom.addEventListener('click', function(e) {
+                e.preventDefault();
+                showNotification('Комната сердца откроется только после прохождения комнат воспоминаний и игры!');
+            });
+        }
+    }
 }
 
 // Обновление прогресса

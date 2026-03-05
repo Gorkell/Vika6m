@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация таймера знакомства
     initializeRelationshipTimer();
     
+    // Проверка на мобильное устройство
+    checkMobileDevice();
+    
     // Инициализация игровой комнаты
     if (window.location.pathname.includes('game')) {
         initializeGameRoom();
@@ -823,4 +826,28 @@ function initializeRelationshipTimer() {
     
     // Обновляем каждый час
     setInterval(updateTimer, 3600000);
+}
+
+// Проверка на мобильное устройство
+function checkMobileDevice() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                     window.innerWidth <= 768;
+    
+    if (isMobile && window.location.pathname.includes('index.html')) {
+        // Показываем предупреждение с задержкой
+        setTimeout(() => {
+            const mobileWarning = document.getElementById('mobileWarning');
+            if (mobileWarning) {
+                mobileWarning.classList.add('show');
+            }
+        }, 1000);
+    }
+}
+
+// Закрытие мобильного предупреждения
+function closeMobileWarning() {
+    const mobileWarning = document.getElementById('mobileWarning');
+    if (mobileWarning) {
+        mobileWarning.classList.remove('show');
+    }
 }
